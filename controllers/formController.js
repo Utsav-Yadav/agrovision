@@ -1,0 +1,300 @@
+const Farmer = require('../models/Farmer');
+const Contractor = require('../models/Contractor');
+const RevenueRequest = require('../models/RevenueRequest');
+const plannerController = require('./plannerController');
+const revenueController = require('./revenueController');
+const portalController = require('./portalController');
+
+exports.createFarmer = async (req, res, next) => {
+  try {
+    const { name, contact, location, acreageHa, crops } = req.body;
+
+    const contractors = await Contractor.find();
+
+    if (!name || !contact || !location || !acreageHa || !crops) {
+      return res.render('farmers', {
+        title: 'Farmers - AgroVision',
+        error: 'All fields are required',
+        farmers: [],
+        contractors
+      });
+    }
+
+    const cropsArray = crops.split(',').map(c => c.trim()).filter(c => c);
+
+    const farmer = new Farmer({
+      name,
+      contact,
+      location,
+      acreageHa: parseFloat(acreageHa),
+      crops: cropsArray
+    });
+
+    await farmer.save();
+
+    // Fetch updated list
+    const farmers = await Farmer.find().sort({ createdAt: -1 });
+
+    res.render('farmers', {
+      title: 'Farmers - AgroVision',
+      message: 'Farmer registered successfully!',
+      farmers,
+      contractors
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.createContractor = async (req, res, next) => {
+  try {
+    const { name, contact, region, requiredAcreageHa, crops } = req.body;
+
+    if (!name || !contact || !region || !requiredAcreageHa || !crops) {
+      return res.render('contractors', {
+        title: 'Contractors - AgroVision',
+        error: 'All fields are required',
+        contractors: []
+      });
+    }
+
+    const cropsArray = crops.split(',').map(c => c.trim()).filter(c => c);
+
+    const contractor = new Contractor({
+      name,
+      contact,
+      region,
+      requiredAcreageHa: parseFloat(requiredAcreageHa),
+      crops: cropsArray
+    });
+
+    await contractor.save();
+
+    // Fetch updated list
+    const contractors = await Contractor.find().sort({ createdAt: -1 });
+
+    res.render('contractors', {
+      title: 'Contractors - AgroVision',
+      message: 'Contractor registered successfully!',
+      contractors
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.calculateRevenue = async (req, res, next) => {
+  try {
+    const { fieldSizeHa, cropType, season, soilQuality } = req.body;
+
+    if (!fieldSizeHa || !cropType || !season || !soilQuality) {
+      return res.render('revenue', {
+        title: 'Revenue Calculator - AgroVision',
+        error: 'All fields are required'
+      });
+    }
+
+    const fieldSize = parseFloat(fieldSizeHa);
+    const quality = parseFloat(soilQuality);
+
+    if (fieldSize <= 0 || quality < 1 || quality > 10) {
+      return res.render('revenue', {
+        title: 'Revenue Calculator - AgroVision',
+        error: 'Invalid input values'
+      });
+    }
+
+    // Get MSP
+    const mspData = revenueController.getMSPData();
+    const msp = mspData[cropType] || 0;
+
+    if (!msp) {
+      return res.render('revenue', {
+        title: 'Revenue Calculator - AgroVision',
+        error: 'Crop type not supported'
+      });
+    }
+
+    // Calculate yield
+    const baseYield = 2;
+    const qualityMultiplier = quality / 5;
+    const seasonMultiplier = season === 'Kharif' ? 1.1 : season === 'Rabi' ? 0.95 : 0.9;
+    const estimatedYield = fieldSize * baseYield * qualityMultiplier * seasonMultiplier;
+
+    const revenue = estimatedYield * msp;
+
+    // Save to database
+    const revenueRequest = new RevenueRequest({
+      fieldSizeHa: fieldSize,
+      cropType,
+      season,
+      soilQuality: quality,
+      result: {
+        estimatedYield: estimatedYield,
+        msp: msp,
+        revenue: revenue
+      }
+    });
+
+    await revenueRequest.save();
+
+    res.render('revenue', {
+      title: 'Revenue Calculator - AgroVision',
+      result: {
+        estimatedYield,
+        msp,
+        revenue
+      }
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.generatePlan = async (req, res, next) => {
+  try {
+    const { cropType, sowingDate, duration } = req.body;
+
+    if (!cropType || !sowingDate || !duration) {
+      return res.render('planner', {
+        title: 'Crop Planner - AgroVision',
+        error: 'All fields are required'
+      });
+    }
+
+    const dur = parseInt(duration);
+    if (dur <= 0) {
+      return res.render('planner', {
+        title: 'Crop Planner - AgroVision',
+        error: 'Duration must be greater than 0'
+      });
+    }
+
+    // Generate plan
+    const schedule = plannerController.generateSchedule(cropType, sowingDate, dur);
+
+    res.render('planner', {
+      title: 'Crop Planner - AgroVision',
+      schedule,
+      message: 'Plan generated successfully!'
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.calculateRevenueFromFarmers = async (req, res, next) => {
+  try {
+    const { fieldSizeHa, cropType, season, soilQuality } = req.body;
+
+    if (!fieldSizeHa || !cropType || !season || !soilQuality) {
+      const farmers = await Farmer.find().sort({ createdAt: -1 });
+      return res.render('farmers', {
+        title: 'Farmers - AgroVision',
+        farmers,
+        error: 'All fields are required'
+      });
+    }
+
+    const fieldSize = parseFloat(fieldSizeHa);
+    const quality = parseFloat(soilQuality);
+
+    if (fieldSize <= 0 || quality < 1 || quality > 10) {
+      const farmers = await Farmer.find().sort({ createdAt: -1 });
+      return res.render('farmers', {
+        title: 'Farmers - AgroVision',
+        farmers,
+        error: 'Invalid input values'
+      });
+    }
+
+    // Get MSP
+    const mspData = revenueController.getMSPData();
+    const msp = mspData[cropType] || 0;
+
+    if (!msp) {
+      const farmers = await Farmer.find().sort({ createdAt: -1 });
+      return res.render('farmers', {
+        title: 'Farmers - AgroVision',
+        farmers,
+        error: 'Crop type not supported'
+      });
+    }
+
+    // Calculate yield
+    const baseYield = 2;
+    const qualityMultiplier = quality / 5;
+    const seasonMultiplier = season === 'Kharif' ? 1.1 : season === 'Rabi' ? 0.95 : 0.9;
+    const estimatedYield = fieldSize * baseYield * qualityMultiplier * seasonMultiplier;
+
+    const revenue = estimatedYield * msp;
+
+    // Save to database
+    const revenueRequest = new RevenueRequest({
+      fieldSizeHa: fieldSize,
+      cropType,
+      season,
+      soilQuality: quality,
+      result: {
+        estimatedYield: estimatedYield,
+        msp: msp,
+        revenue: revenue
+      }
+    });
+
+    await revenueRequest.save();
+
+    const farmers = await Farmer.find().sort({ createdAt: -1 });
+
+    res.render('farmers', {
+      title: 'Farmers - AgroVision',
+      farmers,
+      result: {
+        estimatedYield,
+        msp,
+        revenue
+      }
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.generatePlanFromFarmers = async (req, res, next) => {
+  try {
+    const { cropType, sowingDate, duration } = req.body;
+
+    if (!cropType || !sowingDate || !duration) {
+      const farmers = await Farmer.find().sort({ createdAt: -1 });
+      return res.render('farmers', {
+        title: 'Farmers - AgroVision',
+        farmers,
+        error: 'All fields are required'
+      });
+    }
+
+    const dur = parseInt(duration);
+    if (dur <= 0) {
+      const farmers = await Farmer.find().sort({ createdAt: -1 });
+      return res.render('farmers', {
+        title: 'Farmers - AgroVision',
+        farmers,
+        error: 'Duration must be greater than 0'
+      });
+    }
+
+    // Generate plan
+    const schedule = plannerController.generateSchedule(cropType, sowingDate, dur);
+
+    const farmers = await Farmer.find().sort({ createdAt: -1 });
+
+    res.render('farmers', {
+      title: 'Farmers - AgroVision',
+      farmers,
+      schedule,
+      message: 'Plan generated successfully!'
+    });
+  } catch (err) {
+    next(err);
+  }
+};

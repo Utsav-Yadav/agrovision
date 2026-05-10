@@ -1,0 +1,8 @@
+runtime: node20
+env: standard
+automatic_scaling:
+  min_instances: 1
+  max_instances: 5
+
+env_variables:
+  NODE_ENV: "production"

@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Revenue Calculator - AgroVision</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/layout.css">
+    <link rel="stylesheet" href="/css/pages.css">
+    <style>
+        /* Hero Section */
+        .revenue-hero {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            padding: 3rem 2rem;
+            border-radius: 8px;
+            margin-bottom: 3rem;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .revenue-hero h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .revenue-hero p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+        }
+
+        /* Crop Cards Grid */
+        .crop-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .crop-card {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 3px solid transparent;
+        }
+
+        .crop-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            border-color: #3498db;
+        }
+
+        .crop-card-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .crop-card h3 {
+            font-size: 1.2rem;
+            margin: 1rem 0 0.5rem;
+            color: var(--text-color);
+        }
+
+        .crop-card p {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            margin: 0;
+        }
+
+        /* Features Section */
+        .features-section {
+            background: linear-gradient(135deg, #f8f9fa 0%, #ecf0f1 100%);
+            padding: 2rem;
+            border-radius: 8px;
+            margin-bottom: 3rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .feature-item {
+            text-align: center;
+            padding: 1.5rem;
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            color: #3498db;
+            margin-bottom: 1rem;
+        }
+
+        .feature-item h4 {
+            color: var(--text-color);
+            margin: 0.5rem 0;
+        }
+
+        .feature-item p {
+            color: #7f8c8d;
+            margin: 0;
+            font-size: 0.9rem;
+        }
+
+        /* Form Section */
+        .calculator-form-section {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 3rem;
+        }
+
+        .calculator-form-section h2 {
+            color: #3498db;
+            margin-bottom: 2rem;
+            font-size: 1.8rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-grid .form-group {
+            margin-bottom: 0;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* MSP Reference Cards */
+        .msp-reference-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .msp-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border-top: 4px solid #3498db;
+            text-align: center;
+        }
+
+        .msp-card h4 {
+            color: #3498db;
+            margin-top: 0;
+            font-size: 1.1rem;
+        }
+
+        .msp-price {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #27ae60;
+            margin: 1rem 0;
+        }
+
+        .msp-unit {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+        }
+
+        /* Result Card Enhanced */
+        .result-card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 3rem;
+        }
+
+        .result-card h2 {
+            color: #3498db;
+            margin-bottom: 2rem;
+            font-size: 1.8rem;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 1rem;
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .result-item {
+            background: linear-gradient(135deg, #f8f9fa 0%, #ecf0f1 100%);
+            padding: 2rem;
+            border-radius: 8px;
+            border-left: 5px solid #3498db;
+            text-align: center;
+        }
+
+        .result-item label {
+            display: block;
+            color: #7f8c8d;
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .result-value {
+            margin: 0;
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--text-color);
+        }
+
+        .result-value.highlight {
+            color: #27ae60;
+            font-size: 2.5rem;
+        }
+
+        .unit {
+            display: block;
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            font-weight: normal;
+            margin-top: 0.5rem;
+        }
+
+        /* Revenue Breakdown */
+        .revenue-breakdown {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 2rem;
+        }
+
+        .breakdown-item {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .breakdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .breakdown-label {
+            color: var(--text-color);
+            font-weight: 500;
+        }
+
+        .breakdown-value {
+            font-weight: bold;
+            color: #3498db;
+            font-size: 1.1rem;
+        }
+
+        /* Help Section */
+        .help-section {
+            background: #ecf0f1;
+            padding: 2rem;
+            border-radius: 8px;
+            margin-top: 3rem;
+        }
+
+        .help-section h3 {
+            color: var(--text-color);
+            margin-top: 0;
+        }
+
+        .help-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .help-item {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 6px;
+            border-left: 4px solid #3498db;
+        }
+
+        .help-item h4 {
+            color: #3498db;
+            margin-top: 0;
+        }
+
+        .help-item p {
+            margin: 0.5rem 0;
+            color: #555;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <a href="/" class="logo">
+                <i class="fas fa-leaf"></i> AgroVision
+            </a>
+        </div>
+        <ul class="nav-links">
+            <li><a href="/" class="nav-link">Home</a></li>
+            <li><a href="/farmers" class="nav-link">Farmers</a></li>
+            <li><a href="/contractors" class="nav-link">Contractors</a></li>
+            <li><a href="/revenue" class="nav-link active">Revenue</a></li>
+            <li><a href="/planner" class="nav-link">Planner</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <% if (typeof message !== 'undefined' && message) { %>
+            <div class="alert alert-success">
+                <i class="fas fa-check-circle"></i> <%= message %>
+            </div>
+        <% } %>
+        <% if (typeof error !== 'undefined' && error) { %>
+            <div class="alert alert-error">
+                <i class="fas fa-exclamation-circle"></i> <%= error %>
+            </div>
+        <% } %>
+
+        <!-- Hero Section -->
+        <div class="revenue-hero">
+            <h2><i class="fas fa-chart-line"></i> Revenue Calculator</h2>
+            <p>Estimate your crop revenue and maximize your farm's profitability</p>
+        </div>
+
+        <!-- Features Section -->
+        <div class="features-section">
+            <h3 style="text-align: center; margin-top: 0; color: var(--text-color);">Smart Revenue Planning</h3>
+            <div class="features-grid">
+                <div class="feature-item">
+                    <div class="feature-icon"><i class="fas fa-calculator"></i></div>
+                    <h4>Accurate Estimation</h4>
+                    <p>Get precise revenue projections based on current market data</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon"><i class="fas fa-chart-bar"></i></div>
+                    <h4>Market Insights</h4>
+                    <p>Access Minimum Support Price (MSP) information for crops</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon"><i class="fas fa-trending-up"></i></div>
+                    <h4>Profit Planning</h4>
+                    <p>Plan your farming strategy based on revenue potential</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon"><i class="fas fa-leaf"></i></div>
+                    <h4>Soil Factor</h4>
+                    <p>Consider soil quality for realistic yield projections</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Crop Selection -->
+        <h3 style="margin-bottom: 1.5rem; color: var(--text-color);"><i class="fas fa-seedling"></i> Choose Your Crop</h3>
+        <div class="crop-cards-grid">
+            <div class="crop-card" onclick="selectCrop('Wheat')">
+                <div class="crop-card-icon">🌾</div>
+                <h3>Wheat</h3>
+                <p>Rabi Season</p>
+            </div>
+            <div class="crop-card" onclick="selectCrop('Rice')">
+                <div class="crop-card-icon">🍚</div>
+                <h3>Rice</h3>
+                <p>Kharif Season</p>
+            </div>
+            <div class="crop-card" onclick="selectCrop('Maize')">
+                <div class="crop-card-icon">🌽</div>
+                <h3>Maize</h3>
+                <p>Summer Crop</p>
+            </div>
+            <div class="crop-card" onclick="selectCrop('Cotton')">
+                <div class="crop-card-icon">🏭</div>
+                <h3>Cotton</h3>
+                <p>Kharif Crop</p>
+            </div>
+            <div class="crop-card" onclick="selectCrop('Sugarcane')">
+                <div class="crop-card-icon">🌱</div>
+                <h3>Sugarcane</h3>
+                <p>Long Duration</p>
+            </div>
+            <div class="crop-card" onclick="selectCrop('Groundnut')">
+                <div class="crop-card-icon">🥜</div>
+                <h3>Groundnut</h3>
+                <p>Summer Crop</p>
+            </div>
+        </div>
+
+        <!-- MSP Reference -->
+        <h3 style="margin-bottom: 1.5rem; margin-top: 3rem; color: var(--text-color);"><i class="fas fa-info-circle"></i> Current Market Prices (MSP Reference)</h3>
+        <div class="msp-reference-grid">
+            <div class="msp-card">
+                <h4>🌾 Wheat</h4>
+                <div class="msp-price">₹2,125</div>
+                <div class="msp-unit">per quintal</div>
+            </div>
+            <div class="msp-card">
+                <h4>🍚 Rice</h4>
+                <div class="msp-price">₹2,440</div>
+                <div class="msp-unit">per quintal</div>
+            </div>
+            <div class="msp-card">
+                <h4>🌽 Maize</h4>
+                <div class="msp-price">₹1,850</div>
+                <div class="msp-unit">per quintal</div>
+            </div>
+            <div class="msp-card">
+                <h4>🏭 Cotton</h4>
+                <div class="msp-price">₹5,515</div>
+                <div class="msp-unit">per quintal</div>
+            </div>
+            <div class="msp-card">
+                <h4>🌱 Sugarcane</h4>
+                <div class="msp-price">₹290</div>
+                <div class="msp-unit">per quintal</div>
+            </div>
+            <div class="msp-card">
+                <h4>🥜 Groundnut</h4>
+                <div class="msp-price">₹5,275</div>
+                <div class="msp-unit">per quintal</div>
+            </div>
+        </div>
+
+        <!-- Calculator Form -->
+        <div class="calculator-form-section">
+            <h2><i class="fas fa-calculator"></i> Calculate Your Revenue</h2>
+            <form method="POST" action="/revenue/calculate" id="revenueForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="fieldSizeHa"><i class="fas fa-square"></i> Field Size (Hectares) *</label>
+                        <input type="number" id="fieldSizeHa" name="fieldSizeHa" required step="0.1" placeholder="e.g., 5.5" min="0">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cropType"><i class="fas fa-leaf"></i> Crop Type *</label>
+                        <select id="cropType" name="cropType" required>
+                            <option value="">-- Select Crop --</option>
+                            <option value="Wheat">Wheat</option>
+                            <option value="Rice">Rice</option>
+                            <option value="Maize">Maize</option>
+                            <option value="Cotton">Cotton</option>
+                            <option value="Sugarcane">Sugarcane</option>
+                            <option value="Groundnut">Groundnut</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="season"><i class="fas fa-cloud"></i> Season *</label>
+                        <select id="season" name="season" required>
+                            <option value="">-- Select Season --</option>
+                            <option value="Rabi">Rabi (Winter)</option>
+                            <option value="Kharif">Kharif (Monsoon)</option>
+                            <option value="Summer">Summer</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="soilQuality"><i class="fas fa-layer-group"></i> Soil Quality (1-10) *</label>
+                        <input type="number" id="soilQuality" name="soilQuality" required min="1" max="10" placeholder="1 (Poor) to 10 (Excellent)">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-lg">
+                    <i class="fas fa-magic"></i> Calculate Revenue
+                </button>
+            </form>
+        </div>
+
+        <% if (typeof result !== 'undefined' && result) { %>
+            <!-- Results Section -->
+            <div class="result-card">
+                <h2><i class="fas fa-trophy"></i> Your Revenue Estimate</h2>
+                <div class="result-grid">
+                    <div class="result-item">
+                        <label><i class="fas fa-weight"></i> Estimated Yield</label>
+                        <p class="result-value"><%= result.estimatedYield.toFixed(2) %> <span class="unit">tonnes</span></p>
+                    </div>
+                    <div class="result-item">
+                        <label><i class="fas fa-tag"></i> Minimum Support Price</label>
+                        <p class="result-value">₹<%= result.msp.toLocaleString() %> <span class="unit">per tonne</span></p>
+                    </div>
+                    <div class="result-item">
+                        <label><i class="fas fa-money-bill-wave"></i> Estimated Revenue</label>
+                        <p class="result-value highlight">₹<%= result.revenue.toLocaleString('en-IN', {maximumFractionDigits: 0}) %></p>
+                    </div>
+                </div>
+
+                <!-- Revenue Breakdown -->
+                <div class="revenue-breakdown">
+                    <h3 style="color: #3498db; margin-top: 0;"><i class="fas fa-list"></i> Breakdown Details</h3>
+                    <div class="breakdown-item">
+                        <span class="breakdown-label">Field Size</span>
+                        <span class="breakdown-value"><%= result.fieldSize %> hectares</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span class="breakdown-label">Crop Type</span>
+                        <span class="breakdown-value"><%= result.cropType %></span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span class="breakdown-label">Season</span>
+                        <span class="breakdown-value"><%= result.season %></span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span class="breakdown-label">Yield Factor</span>
+                        <span class="breakdown-value"><%= (result.yieldFactor * 100).toFixed(1) %>%</span>
+                    </div>
+                </div>
+            </div>
+        <% } %>
+
+        <!-- Help Section -->
+        <div class="help-section">
+            <h3><i class="fas fa-question-circle"></i> How to Use the Revenue Calculator</h3>
+            <div class="help-grid">
+                <div class="help-item">
+                    <h4>Step 1: Select Field Size</h4>
+                    <p>Enter the total area of your field in hectares. This determines the scale of your production.</p>
+                </div>
+                <div class="help-item">
+                    <h4>Step 2: Choose Crop Type</h4>
+                    <p>Select the crop you plan to grow. Each crop has different yield potentials and market rates.</p>
+                </div>
+                <div class="help-item">
+                    <h4>Step 3: Select Season</h4>
+                    <p>Choose the appropriate season for your crop. Weather and timing affect yields significantly.</p>
+                </div>
+                <div class="help-item">
+                    <h4>Step 4: Rate Soil Quality</h4>
+                    <p>Assess your soil quality on a scale of 1-10. Better soil leads to higher yields and revenue.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2025 AgroVision - Agricultural Planning Platform</p>
+    </footer>
+
+    <script>
+        function selectCrop(cropName) {
+            document.getElementById('cropType').value = cropName;
+            document.querySelector('.calculator-form-section').scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>

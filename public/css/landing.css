@@ -1,0 +1,23 @@
+/* landing page styles */
+:root{--accent:#1f7a6b;--muted:#64748b}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:#f8fafc;color:#0f172a}
+.container{max-width:1100px;margin:0 auto;padding:24px}
+.hero{background:linear-gradient(135deg,#ecfeff 0%, #f0fff4 100%);padding:40px 0}
+.hero .container{display:flex;gap:20px;align-items:center}
+.hero-left{flex:1}
+.hero-left h1{font-size:32px;margin:0 0 12px}
+.hero-left p{color:var(--muted);margin:0 0 16px}
+.hero-ctas .btn{margin-right:12px}
+.hero-right{width:320px;display:flex;flex-direction:column;gap:12px}
+.card{background:#fff;padding:12px;border-radius:12px;box-shadow:0 10px 30px rgba(2,6,23,0.06)}
+.card.highlight h3{margin:0 0 6px}
+.feature-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:16px}
+.feature.card h4{margin:0 0 8px}
+.howitworks{margin-top:20px}
+.howitworks ol{color:var(--muted)}
+.cta{margin:32px 0;text-align:center}
+.btn{display:inline-block;padding:10px 14px;border-radius:10px;background:transparent;border:2px solid var(--accent);color:var(--accent);text-decoration:none}
+.btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.footer{padding:14px 0;text-align:center;color:var(--muted);margin-top:40px}
+@media (max-width:800px){.hero .container{flex-direction:column}.feature-grid{grid-template-columns:1fr}.hero-right{width:100%}}

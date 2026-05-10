@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:6-alpine
+    container_name: agrovision-db
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: agrovision
+      MONGO_INITDB_ROOT_PASSWORD: secure_password_123
+      MONGO_INITDB_DATABASE: agrovision
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - agrovision-network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    container_name: agrovision-app
+    ports:
+      - "3002:3002"
+    environment:
+      NODE_ENV: production
+      PORT: 3002
+      MONGODB_URI: mongodb://agrovision:secure_password_123@mongodb:27017/agrovision?authSource=admin
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - agrovision-network
+    restart: unless-stopped
+
+volumes:
+  mongodb_data:
+
+networks:
+  agrovision-network:
+    driver: bridge

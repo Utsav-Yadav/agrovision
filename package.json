@@ -1,0 +1,46 @@
+{
+  "name": "agrovision",
+  "version": "1.0.0",
+  "description": "AgroVision - Agricultural Planning Platform. Helps farmers plan crops, manage contractors, and calculate revenue projections.",
+  "main": "index.js",
+  "author": "AgroVision Team",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=9.0.0"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "seed": "node scripts/seed.js",
+    "lint": "eslint .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "agriculture",
+    "farming",
+    "crop-planning",
+    "revenue-calculator",
+    "farm-management"
+  ],
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "ejs": "^5.0.2",
+    "express": "^4.18.2",
+    "mongoose": "^7.8.9"
+  },
+  "devDependencies": {
+    "eslint": "^8.35.0",
+    "nodemon": "^2.0.22"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/agrovision.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/agrovision/issues"
+  },
+  "homepage": "https://github.com/yourusername/agrovision#readme"
+}

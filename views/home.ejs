@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - AgroVision</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/layout.css">
+    <link rel="stylesheet" href="/css/home.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <a href="/" class="logo">
+                <i class="fas fa-leaf"></i> AgroVision
+            </a>
+        </div>
+        <ul class="nav-links">
+            <li><a href="/" class="nav-link active">Home</a></li>
+            <li><a href="/farmers" class="nav-link">Farmers</a></li>
+            <li><a href="/contractors" class="nav-link">Contractors</a></li>
+            <li><a href="/revenue" class="nav-link">Revenue</a></li>
+            <li><a href="/planner" class="nav-link">Planner</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <section class="hero">
+            <h1><i class="fas fa-leaf"></i> AgroVision</h1>
+            <p>Smart Agricultural Planning & Management Platform</p>
+            <div class="hero-buttons">
+                <a href="/farmers" class="btn btn-primary">Find Farmers</a>
+                <a href="/contractors" class="btn btn-secondary">Find Contractors</a>
+            </div>
+        </section>
+
+        <section class="stats">
+            <div class="stat-card">
+                <h3><i class="fas fa-user-tie"></i> <%= stats.farmers %></h3>
+                <p>Registered Farmers</p>
+            </div>
+            <div class="stat-card">
+                <h3><i class="fas fa-hard-hat"></i> <%= stats.contractors %></h3>
+                <p>Registered Contractors</p>
+            </div>
+            <div class="stat-card">
+                <h3><i class="fas fa-rupee-sign"></i> <%= stats.calculations %></h3>
+                <p>Revenue Calculations</p>
+            </div>
+        </section>
+
+        <section class="features">
+            <h2>Features</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <i class="fas fa-chart-line"></i>
+                    <h3>Revenue Calculator</h3>
+                    <p>Calculate crop revenue based on field size, crop type, and soil quality.</p>
+                    <a href="/revenue" class="btn-link">Try it →</a>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-calendar-alt"></i>
+                    <h3>Crop Planner</h3>
+                    <p>Get a detailed schedule for crop planning including sowing, fertilizing, and harvest dates.</p>
+                    <a href="/planner" class="btn-link">Try it →</a>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-users"></i>
+                    <h3>Farmer Directory</h3>
+                    <p>Browse and connect with farmers in your area.</p>
+                    <a href="/farmers" class="btn-link">Browse →</a>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-building"></i>
+                    <h3>Contractor Network</h3>
+                    <p>Find qualified contractors for agricultural services.</p>
+                    <a href="/contractors" class="btn-link">Browse →</a>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2025 AgroVision - Agricultural Planning Platform</p>
+    </footer>
+</body>
+</html>
