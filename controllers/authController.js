@@ -1,6 +1,6 @@
 const Farmer = require('../models/Farmer');
+const Contractor = require('../models/Contractor');
 
-// Farmer Login
 exports.farmerLogin = async (req, res, next) => {
   try {
     const { email, password } = req.body;
@@ -30,7 +30,6 @@ exports.farmerLogin = async (req, res, next) => {
       });
     }
 
-    // Create session
     req.session.farmerId = farmer._id;
     req.session.farmerName = farmer.name;
     req.session.farmerEmail = farmer.email;
@@ -41,7 +40,6 @@ exports.farmerLogin = async (req, res, next) => {
   }
 };
 
-// Farmer Signup
 exports.farmerSignup = async (req, res, next) => {
   try {
     const { name, email, password, passwordConfirm, contact, location, acreageHa, crops } = req.body;
@@ -83,7 +81,6 @@ exports.farmerSignup = async (req, res, next) => {
 
     await farmer.save();
 
-    // Create session
     req.session.farmerId = farmer._id;
     req.session.farmerName = farmer.name;
     req.session.farmerEmail = farmer.email;
@@ -94,12 +91,114 @@ exports.farmerSignup = async (req, res, next) => {
   }
 };
 
-// Farmer Logout
 exports.farmerLogout = (req, res, next) => {
   req.session.destroy((err) => {
     if (err) {
       return next(err);
     }
     res.redirect('/farmers');
+  });
+};
+
+// Contractor Login
+exports.contractorLogin = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.render('contractor-login', {
+        title: 'Contractor Login - AgroVision',
+        error: 'Please provide email and password'
+      });
+    }
+
+    const contractor = await Contractor.findOne({ email: email.toLowerCase() });
+
+    if (!contractor) {
+      return res.render('contractor-login', {
+        title: 'Contractor Login - AgroVision',
+        error: 'Invalid email or password'
+      });
+    }
+
+    const isPasswordMatch = await contractor.matchPassword(password);
+
+    if (!isPasswordMatch) {
+      return res.render('contractor-login', {
+        title: 'Contractor Login - AgroVision',
+        error: 'Invalid email or password'
+      });
+    }
+
+    req.session.contractorId = contractor._id;
+    req.session.contractorName = contractor.name;
+    req.session.contractorEmail = contractor.email;
+
+    res.redirect('/contractor/dashboard');
+  } catch (err) {
+    next(err);
+  }
+};
+
+// Contractor Signup
+exports.contractorSignup = async (req, res, next) => {
+  try {
+    const { name, email, password, passwordConfirm, contact, region, requiredAcreageHa, crops } = req.body;
+
+    if (!name || !email || !password || !passwordConfirm) {
+      return res.render('contractor-signup', {
+        title: 'Contractor Signup - AgroVision',
+        error: 'Please provide all required fields'
+      });
+    }
+
+    if (password !== passwordConfirm) {
+      return res.render('contractor-signup', {
+        title: 'Contractor Signup - AgroVision',
+        error: 'Passwords do not match'
+      });
+    }
+
+    const contractorExists = await Contractor.findOne({ email: email.toLowerCase() });
+
+    if (contractorExists) {
+      return res.render('contractor-signup', {
+        title: 'Contractor Signup - AgroVision',
+        error: 'Email is already registered'
+      });
+    }
+
+    const cropsArray = crops ? crops.split(',').map(c => c.trim()).filter(c => c) : [];
+
+    const contractor = new Contractor({
+      name,
+      email: email.toLowerCase(),
+      password,
+      contact,
+      region,
+      requiredAcreageHa: requiredAcreageHa ? parseFloat(requiredAcreageHa) : null,
+      crops: cropsArray,
+      status: 'active'
+    });
+
+    await contractor.save();
+
+    req.session.contractorId = contractor._id;
+    req.session.contractorName = contractor.name;
+    req.session.contractorEmail = contractor.email;
+
+    res.redirect('/contractor/dashboard');
+  } catch (err) {
+    next(err);
+  }
+};
+
+// Contractor Logout
+exports.contractorLogout = (req, res, next) => {
+  req.session.destroy((err) => {
+    if (err) {
+      return next(err);
+    }
+    res.redirect('/contractors');
   });
 };

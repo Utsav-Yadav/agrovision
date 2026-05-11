@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/layout.css">
+    <link rel="stylesheet" href="/css/pages.css">
+    <style>
+        .dashboard-header {
+            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+        .dashboard-header h1 {
+            margin: 0;
+            font-size: 2rem;
+        }
+        .dashboard-header p {
+            margin: 0.5rem 0 0 0;
+            opacity: 0.9;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid #27ae60;
+        }
+        .stat-card h3 {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            margin: 0;
+        }
+        .stat-card .number {
+            color: #27ae60;
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 0.5rem 0;
+        }
+        .applications-section h2 {
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            color: #333;
+        }
+        .app-card {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .app-card .farmer-info {
+            font-weight: bold;
+            color: #27ae60;
+            margin-bottom: 0.5rem;
+        }
+        .app-card .status {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+        .status.pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .status.accepted {
+            background: #d4edda;
+            color: #155724;
+        }
+        .no-data {
+            text-align: center;
+            padding: 3rem;
+            color: #7f8c8d;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <a href="/" class="logo">
+                <i class="fas fa-leaf"></i> AgroVision
+            </a>
+        </div>
+        <ul class="nav-links">
+            <li><a href="/" class="nav-link">Home</a></li>
+            <li><a href="/contractor/dashboard" class="nav-link active">Dashboard</a></li>
+            <li><a href="/contractor/applications" class="nav-link">Applications</a></li>
+            <li><a href="/contractor/logout" class="nav-link">Logout</a></li>
+        </ul>
+    </nav>
+
+    <div class="container" style="margin-top: 2rem;">
+        <div class="dashboard-header">
+            <h1>👷 Contractor Dashboard</h1>
+            <p>Welcome, <strong><%= contractor.name %></strong></p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Pending Applications</h3>
+                <div class="number"><%= pendingApplications.length %></div>
+            </div>
+            <div class="stat-card">
+                <h3>Active Contracts</h3>
+                <div class="number"><%= activeApplications.length %></div>
+            </div>
+            <div class="stat-card">
+                <h3>Total Applications</h3>
+                <div class="number"><%= totalApplications %></div>
+            </div>
+        </div>
+
+        <div style="margin-top: 2rem;">
+            <h2>📋 Pending Applications</h2>
+            <% if (pendingApplications.length > 0) { %>
+                <% pendingApplications.forEach(app => { %>
+                    <div class="app-card">
+                        <div class="farmer-info">
+                            <%= app.farmerSignature?.name || app.farmerId?.name || 'Unknown Farmer' %>
+                        </div>
+                        <p>
+                            <strong>Location:</strong> <%= app.farmerSignature?.location || 'N/A' %> |
+                            <strong>Acreage:</strong> <%= app.farmerSignature?.farmAcreage || 'N/A' %> ha |
+                            <strong>Contact:</strong> <%= app.farmerSignature?.contact || 'N/A' %>
+                        </p>
+                        <div>
+                            <span class="status pending"><%= app.status %></span>
+                            <small style="color: #999;">Submitted: <%= new Date(app.applicationDate).toLocaleDateString() %></small>
+                        </div>
+                    </div>
+                <% }); %>
+            <% } else { %>
+                <div class="no-data">
+                    <p>No pending applications</p>
+                </div>
+            <% } %>
+        </div>
+
+        <div style="margin-top: 2rem;">
+            <h2>✅ Active Contracts</h2>
+            <% if (activeApplications.length > 0) { %>
+                <% activeApplications.forEach(app => { %>
+                    <div class="app-card">
+                        <div class="farmer-info">
+                            <%= app.farmerSignature?.name || app.farmerId?.name || 'Unknown Farmer' %>
+                        </div>
+                        <p>
+                            <strong>Location:</strong> <%= app.farmerSignature?.location || 'N/A' %> |
+                            <strong>Acreage:</strong> <%= app.farmerSignature?.farmAcreage || 'N/A' %> ha
+                        </p>
+                        <div>
+                            <span class="status accepted"><%= app.status %></span>
+                            <small style="color: #999;">Active since: <%= new Date(app.applicationDate).toLocaleDateString() %></small>
+                        </div>
+                    </div>
+                <% }); %>
+            <% } else { %>
+                <div class="no-data">
+                    <p>No active contracts</p>
+                </div>
+            <% } %>
+        </div>
+
+        <div style="margin-top: 2rem; text-align: center;">
+            <a href="/contractor/logout" style="background: #e74c3c; color: white; padding: 0.75rem 1.5rem; border-radius: 4px; text-decoration: none;">Logout</a>
+        </div>
+    </div>
+</body>
+</html>

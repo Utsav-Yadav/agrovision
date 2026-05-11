@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/layout.css">
+    <link rel="stylesheet" href="/css/pages.css">
+    <style>
+        .page-header { background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%); color: white; padding: 2rem; border-radius: 8px; margin-bottom: 2rem; }
+        .page-header h1 { margin: 0; font-size: 2rem; }
+        .plan-card { background: white; border: 1px solid #e0e0e0; border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem; }
+        .plan-card h3 { margin: 0 0 1rem 0; color: #f39c12; }
+        .schedule-item { background: #f8f9fa; padding: 0.75rem; margin: 0.5rem 0; border-radius: 4px; border-left: 3px solid #f39c12; }
+        .schedule-item strong { color: #333; }
+        .date-badge { background: #f39c12; color: white; padding: 0.25rem 0.5rem; border-radius: 3px; font-size: 0.85rem; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <a href="/" class="logo">
+                <i class="fas fa-leaf"></i> AgroVision
+            </a>
+        </div>
+        <ul class="nav-links">
+            <li><a href="/" class="nav-link">Home</a></li>
+            <li><a href="/farmer/profile" class="nav-link">Profile</a></li>
+            <li><a href="/farmer/my-contracts" class="nav-link">Contracts</a></li>
+            <li><a href="/farmer/plan-history" class="nav-link active">Plans</a></li>
+            <li><a href="/farmer/logout" class="nav-link">Logout</a></li>
+        </ul>
+    </nav>
+    <div class="container" style="margin-top: 2rem;">
+        <div class="page-header">
+            <h1>📅 Plan History</h1>
+            <p>All your crop plans</p>
+        </div>
+
+        <% if (plans && plans.length > 0) { %>
+            <% plans.forEach(plan => { %>
+                <div class="plan-card">
+                    <h3><%= plan.cropType %></h3>
+                    <p>
+                        <strong>Sowing Date:</strong> <%= new Date(plan.sowingDate).toLocaleDateString() %> |
+                        <strong>Duration:</strong> <%= plan.durationDays %> days |
+                        <strong>Created:</strong> <%= new Date(plan.createdAt).toLocaleDateString() %>
+                    </p>
+
+                    <div style="margin-top: 1rem;">
+                        <strong>Schedule:</strong>
+                        <% if (plan.schedule && plan.schedule.length > 0) { %>
+                            <% plan.schedule.forEach(activity => { %>
+                                <div class="schedule-item">
+                                    <strong><%= activity.activity %></strong>
+                                    <span class="date-badge"><%= new Date(activity.date).toLocaleDateString() %></span>
+                                    <small style="display: block; margin-top: 0.25rem; color: #666;">Day <%= activity.day %> | Duration: <%= activity.duration %> days</small>
+                                </div>
+                            <% }); %>
+                        <% } else { %>
+                            <p style="color: #7f8c8d;">No schedule details available</p>
+                        <% } %>
+                    </div>
+                </div>
+            <% }); %>
+        <% } else { %>
+            <div style="text-align: center; padding: 3rem; color: #7f8c8d;">
+                <p>No plans yet. <a href="/planner">Create a plan →</a></p>
+            </div>
+        <% } %>
+    </div>
+</body>
+</html>

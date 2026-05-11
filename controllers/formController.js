@@ -1,9 +1,15 @@
 const Farmer = require('../models/Farmer');
 const Contractor = require('../models/Contractor');
 const RevenueRequest = require('../models/RevenueRequest');
+const Application = require('../models/Application');
 const plannerController = require('./plannerController');
 const revenueController = require('./revenueController');
 const portalController = require('./portalController');
+
+// Services
+const revenueService = require('../services/revenueService');
+const plannerService = require('../services/plannerService');
+const applicationService = require('../services/applicationService');
 
 exports.createFarmer = async (req, res, next) => {
   try {
@@ -97,54 +103,18 @@ exports.calculateRevenue = async (req, res, next) => {
     const fieldSize = parseFloat(fieldSizeHa);
     const quality = parseFloat(soilQuality);
 
-    if (fieldSize <= 0 || quality < 1 || quality > 10) {
+    if (fieldSize <= 0 || quality < 0 || quality > 1) {
       return res.render('revenue', {
         title: 'Revenue Calculator - AgroVision',
         error: 'Invalid input values'
       });
     }
 
-    // Get MSP
-    const mspData = revenueController.getMSPData();
-    const msp = mspData[cropType] || 0;
-
-    if (!msp) {
-      return res.render('revenue', {
-        title: 'Revenue Calculator - AgroVision',
-        error: 'Crop type not supported'
-      });
-    }
-
-    // Calculate yield
-    const baseYield = 2;
-    const qualityMultiplier = quality / 5;
-    const seasonMultiplier = season === 'Kharif' ? 1.1 : season === 'Rabi' ? 0.95 : 0.9;
-    const estimatedYield = fieldSize * baseYield * qualityMultiplier * seasonMultiplier;
-
-    const revenue = estimatedYield * msp;
-
-    // Save to database
-    const revenueRequest = new RevenueRequest({
-      fieldSizeHa: fieldSize,
-      cropType,
-      season,
-      soilQuality: quality,
-      result: {
-        estimatedYield: estimatedYield,
-        msp: msp,
-        revenue: revenue
-      }
-    });
-
-    await revenueRequest.save();
+    const result = await revenueService.calculateRevenue(fieldSize, cropType, season, quality);
 
     res.render('revenue', {
       title: 'Revenue Calculator - AgroVision',
-      result: {
-        estimatedYield,
-        msp,
-        revenue
-      }
+      result
     });
   } catch (err) {
     next(err);
@@ -170,8 +140,7 @@ exports.generatePlan = async (req, res, next) => {
       });
     }
 
-    // Generate plan
-    const schedule = plannerController.generateSchedule(cropType, sowingDate, dur);
+    const schedule = await plannerService.generateSchedule(cropType, sowingDate, dur);
 
     res.render('planner', {
       title: 'Crop Planner - AgroVision',
@@ -199,7 +168,7 @@ exports.calculateRevenueFromFarmers = async (req, res, next) => {
     const fieldSize = parseFloat(fieldSizeHa);
     const quality = parseFloat(soilQuality);
 
-    if (fieldSize <= 0 || quality < 1 || quality > 10) {
+    if (fieldSize <= 0 || quality < 0 || quality > 1) {
       const farmers = await Farmer.find().sort({ createdAt: -1 });
       return res.render('farmers', {
         title: 'Farmers - AgroVision',
@@ -208,52 +177,13 @@ exports.calculateRevenueFromFarmers = async (req, res, next) => {
       });
     }
 
-    // Get MSP
-    const mspData = revenueController.getMSPData();
-    const msp = mspData[cropType] || 0;
-
-    if (!msp) {
-      const farmers = await Farmer.find().sort({ createdAt: -1 });
-      return res.render('farmers', {
-        title: 'Farmers - AgroVision',
-        farmers,
-        error: 'Crop type not supported'
-      });
-    }
-
-    // Calculate yield
-    const baseYield = 2;
-    const qualityMultiplier = quality / 5;
-    const seasonMultiplier = season === 'Kharif' ? 1.1 : season === 'Rabi' ? 0.95 : 0.9;
-    const estimatedYield = fieldSize * baseYield * qualityMultiplier * seasonMultiplier;
-
-    const revenue = estimatedYield * msp;
-
-    // Save to database
-    const revenueRequest = new RevenueRequest({
-      fieldSizeHa: fieldSize,
-      cropType,
-      season,
-      soilQuality: quality,
-      result: {
-        estimatedYield: estimatedYield,
-        msp: msp,
-        revenue: revenue
-      }
-    });
-
-    await revenueRequest.save();
-
+    const result = await revenueService.calculateRevenue(fieldSize, cropType, season, quality);
     const farmers = await Farmer.find().sort({ createdAt: -1 });
 
     res.render('farmers', {
       title: 'Farmers - AgroVision',
       farmers,
-      result: {
-        estimatedYield,
-        msp,
-        revenue
-      }
+      result
     });
   } catch (err) {
     next(err);
@@ -283,9 +213,7 @@ exports.generatePlanFromFarmers = async (req, res, next) => {
       });
     }
 
-    // Generate plan
-    const schedule = plannerController.generateSchedule(cropType, sowingDate, dur);
-
+    const schedule = await plannerService.generateSchedule(cropType, sowingDate, dur);
     const farmers = await Farmer.find().sort({ createdAt: -1 });
 
     res.render('farmers', {
@@ -293,6 +221,70 @@ exports.generatePlanFromFarmers = async (req, res, next) => {
       farmers,
       schedule,
       message: 'Plan generated successfully!'
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// NEW: Sign Contract Endpoint
+exports.signContract = async (req, res, next) => {
+  try {
+    if (!req.session || !req.session.farmerId) {
+      return res.redirect('/farmer/login');
+    }
+
+    const { contractorId, farmerName, farmerContact, farmerLocation, farmAcreage, signatureDate, signature } = req.body;
+
+    if (!contractorId) {
+      const farmers = await Farmer.find().sort({ createdAt: -1 });
+      const contractors = await Contractor.find().sort({ createdAt: -1 });
+      return res.render('farmers', {
+        title: 'Farmers - AgroVision',
+        farmers,
+        contractors,
+        error: 'Contractor is required'
+      });
+    }
+
+    const farmer = await Farmer.findById(req.session.farmerId);
+    const contractor = await Contractor.findById(contractorId);
+
+    if (!farmer || !contractor) {
+      const farmers = await Farmer.find().sort({ createdAt: -1 });
+      const contractors = await Contractor.find().sort({ createdAt: -1 });
+      return res.render('farmers', {
+        title: 'Farmers - AgroVision',
+        farmers,
+        contractors,
+        error: 'Invalid farmer or contractor'
+      });
+    }
+
+    const application = await applicationService.createApplication(
+      req.session.farmerId,
+      contractorId,
+      {
+        farmerSignature: {
+          name: farmerName,
+          date: new Date(signatureDate),
+          initials: signature,
+          contact: farmerContact,
+          location: farmerLocation,
+          farmAcreage: parseFloat(farmAcreage)
+        },
+        termsAccepted: true
+      }
+    );
+
+    const farmers = await Farmer.find().sort({ createdAt: -1 });
+    const contractors = await Contractor.find().sort({ createdAt: -1 });
+
+    res.render('farmers', {
+      title: 'Farmers - AgroVision',
+      farmers,
+      contractors,
+      message: 'Contract signed successfully! Pending contractor approval.'
     });
   } catch (err) {
     next(err);
