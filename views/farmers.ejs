@@ -231,6 +231,12 @@
             <li><a href="/contractors" class="nav-link">Contractors</a></li>
             <li><a href="/revenue" class="nav-link">Revenue</a></li>
             <li><a href="/planner" class="nav-link">Planner</a></li>
+            <% if (typeof sessionID !== 'undefined' && req && req.session && req.session.farmerId) { %>
+                <li style="margin-left: auto;"><a href="/farmer/profile" class="nav-link" style="background-color: var(--primary-color); color: white; padding: 0.5rem 1rem; border-radius: 4px;"><i class="fas fa-user"></i> My Profile</a></li>
+            <% } else { %>
+                <li style="margin-left: auto;"><a href="/farmer/login" class="nav-link" style="background-color: var(--primary-color); color: white; padding: 0.5rem 1rem; border-radius: 4px; margin-right: 0.5rem;"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+                <li><a href="/farmer/signup" class="nav-link" style="background-color: #17a2b8; color: white; padding: 0.5rem 1rem; border-radius: 4px;"><i class="fas fa-user-plus"></i> Signup</a></li>
+            <% } %>
         </ul>
     </nav>
 

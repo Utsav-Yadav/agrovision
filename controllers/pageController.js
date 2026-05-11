@@ -37,7 +37,8 @@ exports.farmersPage = async (req, res, next) => {
     res.render('farmers', {
       title: 'Farmers - AgroVision',
       farmers,
-      contractors
+      contractors,
+      req  // Pass request object so EJS can access session
     });
   } catch (err) {
     next(err);
@@ -74,4 +75,22 @@ exports.plannerPage = (req, res) => {
   res.render('planner', {
     title: 'Crop Planner - AgroVision'
   });
+};
+
+exports.farmerProfile = async (req, res, next) => {
+  try {
+    const farmer = await Farmer.findById(req.session.farmerId);
+
+    if (!farmer) {
+      req.session.destroy();
+      return res.redirect('/farmer/login');
+    }
+
+    res.render('farmer-profile', {
+      title: 'My Profile - AgroVision',
+      farmer
+    });
+  } catch (err) {
+    next(err);
+  }
 };
