@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/layout.css">
+    <link rel="stylesheet" href="/css/pages.css">
+    <style>
+        .page-header { background: linear-gradient(135deg, #27ae60 0%, #229954 100%); color: white; padding: 2rem; border-radius: 8px; margin-bottom: 2rem; }
+        .page-header h1 { margin: 0; font-size: 2rem; }
+        .app-card { background: white; border: 1px solid #e0e0e0; border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem; }
+        .status { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.85rem; font-weight: bold; }
+        .status.pending { background: #fff3cd; color: #856404; }
+        .status.accepted { background: #d4edda; color: #155724; }
+        .status.completed { background: #d1ecf1; color: #0c5460; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <a href="/" class="logo">
+                <i class="fas fa-leaf"></i> AgroVision
+            </a>
+        </div>
+        <ul class="nav-links">
+            <li><a href="/" class="nav-link">Home</a></li>
+            <li><a href="/contractor/dashboard" class="nav-link">Dashboard</a></li>
+            <li><a href="/contractor/applications" class="nav-link active">Applications</a></li>
+            <li><a href="/contractor/logout" class="nav-link">Logout</a></li>
+        </ul>
+    </nav>
+    <div class="container" style="margin-top: 2rem;">
+        <div class="page-header">
+            <h1>📋 Application Management</h1>
+            <p>All farmer applications</p>
+        </div>
+
+        <% if (applications && applications.length > 0) { %>
+            <% applications.forEach(app => { %>
+                <div class="app-card">
+                    <div style="font-weight: bold; color: #27ae60; margin-bottom: 0.5rem;">
+                        <%= app.farmerSignature?.name || 'Unknown Farmer' %>
+                    </div>
+                    <p>
+                        <strong>Location:</strong> <%= app.farmerSignature?.location || 'N/A' %> |
+                        <strong>Acreage:</strong> <%= app.farmerSignature?.farmAcreage || 'N/A' %> ha |
+                        <strong>Contact:</strong> <%= app.farmerSignature?.contact || 'N/A' %>
+                    </p>
+                    <span class="status <%= app.status %>"><%= app.status %></span>
+                    <small style="color: #999; margin-left: 1rem;">Applied: <%= new Date(app.applicationDate).toLocaleDateString() %></small>
+                </div>
+            <% }); %>
+        <% } else { %>
+            <div style="text-align: center; padding: 3rem; color: #7f8c8d;">
+                <p>No applications found</p>
+            </div>
+        <% } %>
+    </div>
+</body>
+</html>

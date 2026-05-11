@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/layout.css">
+    <link rel="stylesheet" href="/css/pages.css">
+    <style>
+        .page-header { background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white; padding: 2rem; border-radius: 8px; margin-bottom: 2rem; }
+        .page-header h1 { margin: 0; font-size: 2rem; }
+        .revenue-card { background: white; border: 1px solid #e0e0e0; border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem; display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+        .revenue-item { }
+        .revenue-item strong { color: #e74c3c; }
+        .revenue-value { font-size: 1.5rem; font-weight: bold; color: #27ae60; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 1rem; text-align: left; border-bottom: 1px solid #e0e0e0; }
+        th { background: #f8f9fa; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <a href="/" class="logo">
+                <i class="fas fa-leaf"></i> AgroVision
+            </a>
+        </div>
+        <ul class="nav-links">
+            <li><a href="/" class="nav-link">Home</a></li>
+            <li><a href="/farmer/profile" class="nav-link">Profile</a></li>
+            <li><a href="/farmer/my-contracts" class="nav-link">Contracts</a></li>
+            <li><a href="/farmer/revenue-history" class="nav-link active">Revenue</a></li>
+            <li><a href="/farmer/logout" class="nav-link">Logout</a></li>
+        </ul>
+    </nav>
+    <div class="container" style="margin-top: 2rem;">
+        <div class="page-header">
+            <h1>💰 Revenue History</h1>
+            <p>All your revenue calculations</p>
+        </div>
+
+        <% if (revenueRequests && revenueRequests.length > 0) { %>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Crop</th>
+                        <th>Field Size (Ha)</th>
+                        <th>Season</th>
+                        <th>Yield (Kg)</th>
+                        <th>Revenue (₹)</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% revenueRequests.forEach(req => { %>
+                        <tr>
+                            <td><strong><%= req.cropType %></strong></td>
+                            <td><%= req.fieldSizeHa %></td>
+                            <td><%= req.season %></td>
+                            <td><%= req.result?.totalYieldKg ? Math.round(req.result.totalYieldKg) : 'N/A' %></td>
+                            <td style="color: #27ae60; font-weight: bold;">₹<%= req.result?.revenueINR ? req.result.revenueINR.toLocaleString('en-IN') : 'N/A' %></td>
+                            <td><%= new Date(req.createdAt).toLocaleDateString() %></td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        <% } else { %>
+            <div style="text-align: center; padding: 3rem; color: #7f8c8d;">
+                <p>No revenue calculations yet. <a href="/revenue">Calculate now →</a></p>
+            </div>
+        <% } %>
+    </div>
+</body>
+</html>
