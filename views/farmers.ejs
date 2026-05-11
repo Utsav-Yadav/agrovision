@@ -266,6 +266,9 @@
 
         <!-- Tabs -->
         <div class="tabs">
+            <button class="tab-btn" onclick="switchTab(event, 'farmers-tab')">
+                <i class="fas fa-users"></i> Farmers List
+            </button>
             <button class="tab-btn active" onclick="switchTab(event, 'contractors-tab')">
                 <i class="fas fa-building"></i> Find Contractors
             </button>
@@ -275,6 +278,39 @@
             <button class="tab-btn" onclick="switchTab(event, 'planner-tab')">
                 <i class="fas fa-calendar-alt"></i> Crop Planner
             </button>
+        </div>
+
+        <!-- FARMERS TAB -->
+        <div id="farmers-tab" class="tab-content">
+            <h2 style="margin-bottom: 1rem;"><i class="fas fa-users"></i> Registered Farmers</h2>
+
+            <% if (farmers && farmers.length > 0) { %>
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem; margin-top: 2rem;">
+                    <% farmers.forEach(farmer => { %>
+                        <div style="background: white; border-radius: 8px; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s; cursor: pointer;" onmouseover="this.style.boxShadow='0 4px 16px rgba(0,0,0,0.15)'; this.style.transform='translateY(-5px)';" onmouseout="this.style.boxShadow='0 2px 8px rgba(0,0,0,0.1)'; this.style.transform='translateY(0)';">
+                            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                                <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #27ae60, #2ecc71); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem;">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <h3 style="margin: 0; color: #2c3e50;"><%= farmer.name %></h3>
+                            </div>
+                            <div style="margin: 1rem 0; font-size: 0.95rem; color: #555;">
+                                <p style="margin: 0.5rem 0;"><strong><i class="fas fa-phone"></i> Contact:</strong> <%= farmer.contact || 'N/A' %></p>
+                                <p style="margin: 0.5rem 0;"><strong><i class="fas fa-map-marker-alt"></i> Location:</strong> <%= farmer.location || 'N/A' %></p>
+                                <p style="margin: 0.5rem 0;"><strong><i class="fas fa-field"></i> Acreage:</strong> <%= farmer.acreageHa || 'N/A' %> Ha</p>
+                                <p style="margin: 0.5rem 0;"><strong><i class="fas fa-leaf"></i> Crops:</strong> <%= farmer.crops ? farmer.crops.join(', ') : 'N/A' %></p>
+                                <p style="margin: 0.5rem 0; font-size: 0.85rem; color: #7f8c8d;"><strong><i class="fas fa-calendar-alt"></i> Joined:</strong> <%= new Date(farmer.createdAt).toLocaleDateString() %></p>
+                            </div>
+                        </div>
+                    <% }); %>
+                </div>
+            <% } else { %>
+                <div style="text-align: center; padding: 3rem; background: #f8f9fa; border-radius: 8px; margin-top: 2rem;">
+                    <i class="fas fa-inbox" style="font-size: 3rem; color: #bdc3c7; margin-bottom: 1rem;"></i>
+                    <h3 style="color: #2c3e50;">No Farmers Registered Yet</h3>
+                    <p style="color: #7f8c8d;">Click the "Register New Farmer" button to add a farmer profile!</p>
+                </div>
+            <% } %>
         </div>
 
         <!-- CONTRACTORS TAB -->
@@ -661,6 +697,17 @@
                         btn.classList.add('active');
                     }
                 });
+            } else {
+                // Set contractors tab as default if not found
+                const contractorTab = document.getElementById('contractors-tab');
+                if (contractorTab) {
+                    contractorTab.classList.add('active');
+                    buttons.forEach(btn => {
+                        if (btn.getAttribute('onclick').includes('contractors-tab')) {
+                            btn.classList.add('active');
+                        }
+                    });
+                }
             }
 
             // Auto-switch to revenue tab if result is shown
@@ -675,7 +722,7 @@
                 document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
                 document.getElementById('revenue-tab').classList.add('active');
                 document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-                document.querySelectorAll('.tab-btn')[1].classList.add('active');
+                document.querySelectorAll('.tab-btn')[2].classList.add('active');
             }
 
             if (scheduleCard) {
@@ -686,7 +733,7 @@
                 document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
                 document.getElementById('planner-tab').classList.add('active');
                 document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-                document.querySelectorAll('.tab-btn')[2].classList.add('active');
+                document.querySelectorAll('.tab-btn')[3].classList.add('active');
             }
         });
     </script>

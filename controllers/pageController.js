@@ -56,9 +56,12 @@ exports.contractorsPage = async (req, res, next) => {
       .skip(skip)
       .sort({ createdAt: -1 });
 
+    const farmers = await Farmer.find();
+
     res.render('contractors', {
       title: 'Contractors - AgroVision',
-      contractors
+      contractors,
+      farmers
     });
   } catch (err) {
     next(err);
