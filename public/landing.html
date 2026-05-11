@@ -1,45 +1,400 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>AgroVision — Landing</title>
+  <title>AgroVision — Agricultural Planning Platform</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      color: #2c3e50;
+      line-height: 1.6;
+    }
+
+    /* HEADER */
+    header.topbar {
+      background: white;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+      padding: 1.5rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand {
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #27ae60, #2ecc71);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .brand::before {
+      content: '🌾';
+      font-size: 1.8rem;
+    }
+
+    nav.nav {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .nav-btn {
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .nav-btn.primary {
+      background: linear-gradient(135deg, #27ae60, #2ecc71);
+      color: white;
+    }
+
+    .nav-btn.primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(39, 174, 96, 0.3);
+    }
+
+    /* MAIN CONTAINER */
+    main.container {
+      max-width: 1200px;
+      margin: 4rem auto;
+      padding: 0 2rem;
+    }
+
+    /* HERO SECTION */
+    .hero-card {
+      background: white;
+      border-radius: 16px;
+      padding: 4rem;
+      margin-bottom: 3rem;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+      text-align: center;
+    }
+
+    .hero-card h1 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 3.5rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, #27ae60, #2980b9);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.2;
+    }
+
+    .hero-card .subtitle {
+      font-size: 1.3rem;
+      color: #555;
+      margin-bottom: 2rem;
+      font-weight: 500;
+    }
+
+    .features-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0;
+      list-style: none;
+    }
+
+    .features-list li {
+      background: linear-gradient(135deg, rgba(39, 174, 96, 0.1), rgba(41, 128, 185, 0.1));
+      padding: 1.5rem;
+      border-radius: 12px;
+      border-left: 4px solid #27ae60;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .features-list li:hover {
+      transform: translateX(10px);
+      border-left-color: #2ecc71;
+    }
+
+    .features-list li::before {
+      content: '✓';
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      background: #27ae60;
+      color: white;
+      border-radius: 50%;
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+
+    /* CTA SECTION */
+    .cta-section {
+      background: white;
+      border-radius: 16px;
+      padding: 3.5rem 2rem;
+      margin-bottom: 3rem;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+      text-align: center;
+    }
+
+    .cta-section h2 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: #2c3e50;
+    }
+
+    .cta-section .description {
+      font-size: 1.1rem;
+      color: #666;
+      margin-bottom: 2.5rem;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      margin-top: 2.5rem;
+      flex-wrap: wrap;
+    }
+
+    .cta-btn {
+      padding: 1.2rem 3rem;
+      font-size: 1.1rem;
+      text-decoration: none;
+      border-radius: 12px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .cta-btn.farmer {
+      background: linear-gradient(135deg, #27ae60, #2ecc71);
+      color: white;
+      min-width: 250px;
+      justify-content: center;
+    }
+
+    .cta-btn.farmer:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 30px rgba(39, 174, 96, 0.4);
+    }
+
+    .cta-btn.contractor {
+      background: linear-gradient(135deg, #2980b9, #3498db);
+      color: white;
+      min-width: 250px;
+      justify-content: center;
+    }
+
+    .cta-btn.contractor:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 30px rgba(41, 128, 185, 0.4);
+    }
+
+    .cta-btn i {
+      font-size: 1.3rem;
+    }
+
+    /* API SECTION */
+    .api-section {
+      background: white;
+      border-radius: 16px;
+      padding: 3rem 2rem;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+      margin-bottom: 3rem;
+    }
+
+    .api-section h3 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 2rem;
+      color: #2c3e50;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .api-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      list-style: none;
+    }
+
+    .api-grid li {
+      background: linear-gradient(135deg, #f8f9fa, #ecf0f1);
+      padding: 1.5rem;
+      border-radius: 10px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+      border-left: 3px solid #2980b9;
+      color: #2c3e50;
+      word-break: break-all;
+      transition: all 0.3s ease;
+    }
+
+    .api-grid li:hover {
+      background: linear-gradient(135deg, #e8f5e9, #d4f1d4);
+      border-left-color: #27ae60;
+      transform: translateX(5px);
+    }
+
+    /* FOOTER */
+    footer {
+      text-align: center;
+      padding: 2rem;
+      color: #7f8c8d;
+      font-size: 0.95rem;
+      margin-top: 4rem;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      header.topbar {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .hero-card {
+        padding: 2rem;
+      }
+
+      .hero-card h1 {
+        font-size: 2.2rem;
+      }
+
+      .cta-section h2 {
+        font-size: 1.8rem;
+      }
+
+      .cta-buttons {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .cta-btn {
+        width: 100%;
+      }
+
+      .features-list {
+        grid-template-columns: 1fr;
+      }
+
+      main.container {
+        margin: 2rem auto;
+        padding: 0 1rem;
+      }
+    }
+
+    /* ANIMATIONS */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .hero-card,
+    .cta-section,
+    .api-section {
+      animation: fadeIn 0.6s ease-out;
+    }
+
+    .cta-section {
+      animation-delay: 0.2s;
+    }
+
+    .api-section {
+      animation-delay: 0.4s;
+    }
+  </style>
 </head>
 <body>
   <header class="topbar">
     <div class="brand">AgroVision</div>
     <nav class="nav">
-      <a href="/index.html" class="nav-btn primary">Open Dashboard</a>
+      <a href="/index.html" class="nav-btn primary">
+        <i class="fas fa-chart-line"></i> Dashboard
+      </a>
     </nav>
   </header>
+
   <main class="container">
-    <div class="card">
+    <!-- HERO SECTION -->
+    <div class="hero-card">
       <h1>Welcome to AgroVision</h1>
-      <p>AgroVision helps farmers and contractors by providing:</p>
-      <ul>
-        <li>Revenue calculator (MSP + yield algorithm)</li>
-        <li>Crop planner with schedules</li>
-        <li>Dual portals for farmers and contractors</li>
+      <p class="subtitle">Empowering farmers and contractors with smart agricultural planning</p>
+      <ul class="features-list">
+        <li>Revenue Calculator with MSP + Yield Algorithm</li>
+        <li>Smart Crop Planner with Schedules</li>
+        <li>Dedicated Portals for Farmers & Contractors</li>
       </ul>
     </div>
 
-    <div class="card" style="text-align: center;">
-      <h2>Get Started</h2>
-      <p>Select your role to register and view profiles:</p>
-      <div style="display: flex; gap: 2rem; justify-content: center; margin-top: 2rem; flex-wrap: wrap;">
-        <a href="/farmers" class="nav-btn primary" style="padding: 1rem 2rem; font-size: 1.1rem; text-decoration: none; border-radius: 8px; background-color: #27ae60; display: inline-block;">
-          <i class="fas fa-tractor" style="margin-right: 0.5rem;"></i>Farmer
+    <!-- CTA SECTION -->
+    <div class="cta-section">
+      <h2>Get Started Today</h2>
+      <p class="description">Choose your role to register, view profiles, and connect with the agricultural community</p>
+      <div class="cta-buttons">
+        <a href="/farmers" class="cta-btn farmer">
+          <i class="fas fa-tractor"></i> Farmer Portal
         </a>
-        <a href="/contractors" class="nav-btn primary" style="padding: 1rem 2rem; font-size: 1.1rem; text-decoration: none; border-radius: 8px; background-color: #2980b9; display: inline-block;">
-          <i class="fas fa-hard-hat" style="margin-right: 0.5rem;"></i>Contractor
+        <a href="/contractors" class="cta-btn contractor">
+          <i class="fas fa-hard-hat"></i> Contractor Portal
         </a>
       </div>
     </div>
 
-    <div class="card">
-      <h3>API Endpoints</h3>
-      <ul>
+    <!-- API SECTION -->
+    <div class="api-section">
+      <h3><i class="fas fa-code"></i> Available API Endpoints</h3>
+      <ul class="api-grid">
         <li>POST /api/revenue</li>
         <li>POST /api/crop-planner</li>
         <li>POST /api/portals/farmers</li>
@@ -49,5 +404,9 @@
       </ul>
     </div>
   </main>
+
+  <footer>
+    <p>&copy; 2025 AgroVision — Agricultural Planning Platform. All rights reserved.</p>
+  </footer>
 </body>
 </html>
