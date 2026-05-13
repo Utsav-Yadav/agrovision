@@ -25,6 +25,7 @@
     </nav>
 
     <div class="container">
+        <% const farmersList = Array.isArray(farmers) ? farmers : []; %>
         <% if (typeof message !== 'undefined' && message) { %>
             <div class="alert alert-success">
                 <i class="fas fa-check-circle"></i> <%= message %>
@@ -104,9 +105,9 @@
 
         <div class="list-section" style="margin-top: 3rem;">
             <h2><i class="fas fa-users"></i> Registered Farmers</h2>
-            <% if (farmers && farmers.length > 0) { %>
+            <% if (farmersList.length > 0) { %>
                 <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem; margin-top: 2rem;">
-                    <% farmers.forEach(farmer => { %>
+                    <% farmersList.forEach(farmer => { %>
                         <div style="background: white; border-radius: 8px; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s; cursor: pointer;" onmouseover="this.style.boxShadow='0 4px 16px rgba(0,0,0,0.15)'; this.style.transform='translateY(-5px)';" onmouseout="this.style.boxShadow='0 2px 8px rgba(0,0,0,0.1)'; this.style.transform='translateY(0)';">
                             <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
                                 <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #27ae60, #2ecc71); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem;">

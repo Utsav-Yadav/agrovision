@@ -251,6 +251,212 @@
             margin: 0;
             font-size: 0.9rem;
         }
+
+        /* Modern AI Insights Section */
+        .ai-insights-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 16px;
+            padding: 3rem 2rem;
+            margin-bottom: 3rem;
+            color: white;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ai-insights-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: aiGlow 8s ease-in-out infinite alternate;
+        }
+
+        @keyframes aiGlow {
+            0% { transform: rotate(0deg) scale(1); }
+            100% { transform: rotate(180deg) scale(1.1); }
+        }
+
+        .ai-header {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            margin-bottom: 2.5rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .ai-icon {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .ai-title h2 {
+            margin: 0 0 0.5rem 0;
+            font-size: 2.2rem;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .ai-title p {
+            margin: 0;
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .ai-insights-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .ai-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .ai-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+
+        .ai-card-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .ai-card-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .ai-summary .ai-card-icon {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+        }
+
+        .ai-tips .ai-card-icon {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+        }
+
+        .ai-warning .ai-card-icon {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+        }
+
+        .ai-card h3 {
+            margin: 0;
+            color: #2c3e50;
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+
+        .ai-card-content p {
+            margin: 0;
+            color: #555;
+            line-height: 1.6;
+            font-size: 1rem;
+        }
+
+        .ai-tips-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .ai-tips-list li {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #ecf0f1;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            color: #555;
+        }
+
+        .ai-tips-list li:last-child {
+            border-bottom: none;
+        }
+
+        .ai-tips-list li i {
+            color: #2ecc71;
+            margin-top: 0.1rem;
+        }
+
+        .ai-raw-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-top: 2rem;
+            position: relative;
+            z-index: 2;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .ai-raw-section h3 {
+            margin: 0 0 1rem 0;
+            color: #2c3e50;
+            font-size: 1.4rem;
+        }
+
+        .ai-raw-content pre {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            color: #495057;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        @media (max-width: 768px) {
+            .ai-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+
+            .ai-insights-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .ai-insights-section {
+                padding: 2rem 1rem;
+            }
+
+            .ai-title h2 {
+                font-size: 1.8rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -285,6 +491,33 @@
         <div class="planner-hero">
             <h2><i class="fas fa-calendar-alt"></i> Crop Planner</h2>
             <p>Create detailed seasonal plans for your crops and optimize your farming schedule</p>
+        </div>
+
+        <!-- AI Planner Top Section -->
+        <div class="ai-insights-section">
+            <div class="ai-header">
+                <div class="ai-icon">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="ai-title">
+                    <h2><i class="fas fa-brain"></i> AI Crop Planner</h2>
+                    <p>Generate a smart planting schedule and get AI-powered crop recommendations at the top of the page.</p>
+                </div>
+            </div>
+
+            <div class="ai-insights-grid">
+                <div class="ai-card ai-summary">
+                    <div class="ai-card-header">
+                        <div class="ai-card-icon">
+                            <i class="fas fa-lightbulb"></i>
+                        </div>
+                        <h3>Ready to Generate</h3>
+                    </div>
+                    <div class="ai-card-content">
+                        <p>Fill out the planner form below to receive expert AI insights, crop summaries, and seasonal tips.</p>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Features Section -->
@@ -356,17 +589,19 @@
                 <div class="form-grid">
                     <div class="form-group">
                         <label for="cropType"><i class="fas fa-leaf"></i> Crop Type *</label>
-                        <select id="cropType" name="cropType" required>
-                            <option value="">-- Select Crop --</option>
-                            <option value="Wheat">Wheat</option>
-                            <option value="Rice">Rice</option>
-                            <option value="Maize">Maize</option>
-                            <option value="Cotton">Cotton</option>
-                            <option value="Sugarcane">Sugarcane</option>
-                            <option value="Groundnut">Groundnut</option>
-                        </select>
-                    </div>
-
+                    <input type="text" id="cropType" name="cropType" required placeholder="Type any crop name or choose from suggestions" list="cropOptions">
+                    <datalist id="cropOptions">
+                        <option value="Wheat">
+                        <option value="Rice">
+                        <option value="Maize">
+                        <option value="Cotton">
+                        <option value="Sugarcane">
+                        <option value="Groundnut">
+                        <option value="Soybean">
+                        <option value="Potato">
+                        <option value="Tomato">
+                        <option value="Sugar Beet">
+                    </datalist>
                     <div class="form-group">
                         <label for="sowingDate"><i class="fas fa-calendar-day"></i> Sowing Date *</label>
                         <input type="date" id="sowingDate" name="sowingDate" required>
@@ -454,6 +689,12 @@
                                 <h3><i class="fas fa-check-circle"></i> <%= event.activity %></h3>
                                 <p><strong>📅 Date:</strong> <%= event.date %></p>
                                 <p><strong>⏱️ Day:</strong> <%= event.day %></p>
+                                <% if (event.details) { %>
+                                    <p><strong>🔍 Details:</strong> <%= event.details %></p>
+                                <% } %>
+                                <% if (event.materials) { %>
+                                    <p><strong>🧰 Materials:</strong> <%= event.materials %></p>
+                                <% } %>
                                 <% if (event.notes) { %>
                                     <p><strong>📝 Notes:</strong> <%= event.notes %></p>
                                 <% } %>

@@ -4,6 +4,7 @@ const RevenueRequest = require('../models/RevenueRequest');
 const plannerController = require('./plannerController');
 const revenueController = require('./revenueController');
 const portalController = require('./portalController');
+const aiPlannerService = require('../services/aiPlannerService');
 
 exports.createFarmer = async (req, res, next) => {
   try {
@@ -50,11 +51,14 @@ exports.createContractor = async (req, res, next) => {
   try {
     const { name, contact, region, requiredAcreageHa, crops } = req.body;
 
+    const farmers = await Farmer.find().sort({ createdAt: -1 });
+
     if (!name || !contact || !region || !requiredAcreageHa || !crops) {
       return res.render('contractors', {
         title: 'Contractors - AgroVision',
         error: 'All fields are required',
-        contractors: []
+        contractors: [],
+        farmers: Array.isArray(farmers) ? farmers : []
       });
     }
 
@@ -70,14 +74,10 @@ exports.createContractor = async (req, res, next) => {
 
     await contractor.save();
 
-    // Fetch updated list
-    const contractors = await Contractor.find().sort({ createdAt: -1 });
+    req.session.message = 'Contractor registered successfully!';
+    req.session.error = null;
 
-    res.render('contractors', {
-      title: 'Contractors - AgroVision',
-      message: 'Contractor registered successfully!',
-      contractors
-    });
+    res.redirect('/contractors');
   } catch (err) {
     next(err);
   }
@@ -172,12 +172,28 @@ exports.generatePlan = async (req, res, next) => {
 
     // Generate plan
     const schedule = plannerController.generateSchedule(cropType, sowingDate, dur);
+    const aiInsights = await aiPlannerService.getCropPlannerInsights({
+      cropType,
+      sowingDate,
+      duration: dur,
+      schedule
+    });
 
-    res.render('planner', {
+    const renderData = {
       title: 'Crop Planner - AgroVision',
       schedule,
-      message: 'Plan generated successfully!'
-    });
+      aiInsights
+    };
+
+    if (aiInsights && aiInsights.error) {
+      renderData.error = aiInsights.error;
+    } else if (!aiInsights) {
+      renderData.error = 'AI planner unavailable right now. Your schedule was generated, but AI insights could not be retrieved.';
+    } else {
+      renderData.message = 'Plan generated successfully!';
+    }
+
+    res.render('planner', renderData);
   } catch (err) {
     next(err);
   }
@@ -285,6 +301,12 @@ exports.generatePlanFromFarmers = async (req, res, next) => {
 
     // Generate plan
     const schedule = plannerController.generateSchedule(cropType, sowingDate, dur);
+    const aiInsights = await aiPlannerService.getCropPlannerInsights({
+      cropType,
+      sowingDate,
+      duration: dur,
+      schedule
+    });
 
     const farmers = await Farmer.find().sort({ createdAt: -1 });
 
@@ -292,6 +314,7 @@ exports.generatePlanFromFarmers = async (req, res, next) => {
       title: 'Farmers - AgroVision',
       farmers,
       schedule,
+      aiInsights,
       message: 'Plan generated successfully!'
     });
   } catch (err) {

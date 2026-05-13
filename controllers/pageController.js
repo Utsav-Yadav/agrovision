@@ -58,10 +58,17 @@ exports.contractorsPage = async (req, res, next) => {
 
     const farmers = await Farmer.find();
 
+    const message = req.session.message;
+    const error = req.session.error;
+    req.session.message = null;
+    req.session.error = null;
+
     res.render('contractors', {
       title: 'Contractors - AgroVision',
       contractors,
-      farmers
+      farmers,
+      message,
+      error
     });
   } catch (err) {
     next(err);
