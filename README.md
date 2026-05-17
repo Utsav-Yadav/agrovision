@@ -69,12 +69,18 @@ docker run -p 3002:3002 \
 
 ## Environment Variables
 
+Copy `.env.example` to `.env` and fill in your production credentials before running locally or deploying.
+
 ```env
 NODE_ENV=production
 PORT=3002
-MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/agrovision
+MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/agrovision?retryWrites=true&w=majority
+SESSION_SECRET=replace-with-a-strong-secret
+OPENAI_API_KEY=your-openai-api-key
 CORS_ORIGIN=*
 ```
+
+> Most deployment platforms set `PORT` automatically, so you typically only need to define `MONGODB_URI`, `SESSION_SECRET`, and optionally `OPENAI_API_KEY`/`CORS_ORIGIN`.
 
 ## Project Structure
 
@@ -132,7 +138,7 @@ npm test            # Run tests (if configured)
 - `POST /revenue/calculate` - Calculate revenue estimate
 - `POST /planner/generate` - Generate crop schedule
 - `POST /farmers/calculate-revenue` - Calculate revenue from farmers portal
-- `POST /farmers/generate-plan` - Generate plan from farmers portal
+- `POST /farmers/generate-plan` - Generate plan from farmers portal using ai
 
 ## Deployment Platforms
 

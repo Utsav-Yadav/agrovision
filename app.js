@@ -3,6 +3,7 @@ const session = require('express-session');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const path = require('path');
+const mongoose = require('mongoose');
 const apiRoutes = require('./routes/api');
 const pageRoutes = require('./routes/pages');
 
@@ -49,6 +50,27 @@ app.use(express.static(path.join(__dirname, 'public'), {
   maxAge: '1d',
   etag: false
 }));
+
+// Degraded mode middleware when MongoDB is unavailable
+app.use((req, res, next) => {
+  if (req.path === '/api/health') {
+    return next();
+  }
+
+  if (mongoose.connection.readyState !== 1) {
+    const message = 'Database connection is not available. The service is running in degraded mode.';
+    if (req.accepts('html')) {
+      return res.status(503).render('error', {
+        message,
+        error: {}
+      });
+    }
+
+    return res.status(503).json({ error: message });
+  }
+
+  next();
+});
 
 // Page routes (server-rendered)
 app.use('/', pageRoutes);
